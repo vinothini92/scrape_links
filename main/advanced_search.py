@@ -108,7 +108,7 @@ def keyword_read(br):
     config = ConfigParser.RawConfigParser()
     config.read('links.cfg')
     path = config.get('section1','filepath')
-    print path
+    #print path
     files=glob.glob(path)
     print files
     global i
@@ -130,20 +130,21 @@ def keyword_read(br):
 if __name__ == '__main__':
     start = time.time()
     parser = argparse.ArgumentParser()
-    parser.add_argument("--query",help="query to search",
+    parser.add_argument("--q",help="query to search",
                         type=str)
     args = parser.parse_args()
-    
+   
     try:
         br = mechanize.Browser(factory=mechanize.RobustFactory()) 
-    except HTTPError,e:
+        if args.q:
+            print "Keyword: ",args.q
+            googlesearch(br,args.q)
+        else:
+            keyword_read(br)
+    except mechanize.HTTPError,e:
         print "Got error code",e.code
         logger.error("HTTP Error")
-    if args.query:
-        print "Keyword: ",args.query
-        googlesearch(br,args.query)
-    else:
-        keyword_read(br)
+   
     run_time = time.time()-start
     print "It took",run_time ,"for files",i
 
